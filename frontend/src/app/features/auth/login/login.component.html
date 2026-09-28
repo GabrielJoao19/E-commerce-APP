@@ -1,0 +1,48 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Acessar sua Conta</h2>
+      <p>Entre com seu e-mail e senha cadastrados</p>
+    </div>
+
+    <div *ngIf="mensagemErro()" class="alert-error">
+      {{ mensagemErro() }}
+    </div>
+
+    <form [formGroup]="formulario" (ngSubmit)="entrar()">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="exemplo@email.com.br"
+        />
+        <span class="field-error" *ngIf="formulario.get('email')?.touched && formulario.get('email')?.invalid">
+          Informe um e-mail válido
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input
+          id="senha"
+          type="password"
+          formControlName="senha"
+          placeholder="••••••"
+        />
+        <span class="field-error" *ngIf="formulario.get('senha')?.touched && formulario.get('senha')?.invalid">
+          A senha deve ter no mínimo 6 caracteres
+        </span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-submit" [disabled]="carregando()">
+        {{ carregando() ? 'Entrando...' : 'Entrar na Conta' }}
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Ainda não possui cadastro? <a routerLink="/cadastrar">Criar conta</a></p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="container detail-container">
+  <a routerLink="/" class="back-link">← Voltar para o catálogo de produtos</a>
+
+  <div *ngIf="carregando()" class="loading">
+    <p>Carregando detalhes do produto...</p>
+  </div>
+
+  <div *ngIf="!carregando() && produto() as p" class="product-layout">
+    <div class="product-gallery">
+      <img
+        [src]="p.imagens && p.imagens.length > 0 ? p.imagens[0] : 'https://placehold.co/600x500?text=Sem+Foto'"
+        [alt]="p.nome"
+        class="main-image"
+      />
+    </div>
+
+    <div class="product-info">
+      <span class="category-badge">{{ p.categoria?.nome }}</span>
+      <h1 class="title">{{ p.nome }}</h1>
+      <p class="price">{{ p.preco | currency : 'BRL' : 'symbol' : '1.2-2' }}</p>
+
+      <p class="description">{{ p.descricao }}</p>
+
+      <div class="stock-info">
+        <span class="stock-status" [class.in-stock]="p.estoque > 0">
+          {{ p.estoque > 0 ? 'Em Estoque (' + p.estoque + ' unidades disponíveis)' : 'Produto Esgotado' }}
+        </span>
+      </div>
+
+      <div class="actions" *ngIf="p.estoque > 0">
+        <div class="quantity-selector">
+          <button (click)="decrementarQuantidade()" title="Diminuir">-</button>
+          <span>{{ quantidade() }}</span>
+          <button (click)="incrementarQuantidade()" title="Aumentar">+</button>
+        </div>
+
+        <button class="btn btn-primary btn-large" (click)="adicionarAoCarrinho()">
+          Adicionar ao Carrinho
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

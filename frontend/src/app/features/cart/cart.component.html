@@ -1,0 +1,66 @@
+<div class="container cart-page">
+  <h1 class="page-title">Meu Carrinho de Compras</h1>
+
+  <div *ngIf="carrinhoService.itens().length === 0" class="empty-cart">
+    <span class="icon">🛒</span>
+    <h2>Seu carrinho está vazio no momento</h2>
+    <p>Navegue pelas ofertas da loja e adicione seus itens favoritos!</p>
+    <a routerLink="/" class="btn btn-primary">Ver Produtos em Destaque</a>
+  </div>
+
+  <div *ngIf="carrinhoService.itens().length > 0" class="cart-grid">
+    <div class="cart-items">
+      <div *ngFor="let item of carrinhoService.itens()" class="cart-item">
+        <img
+          [src]="item.produto.imagens && item.produto.imagens.length > 0 ? item.produto.imagens[0] : 'https://placehold.co/100x100?text=Sem+Foto'"
+          [alt]="item.produto.nome"
+          class="item-img"
+        />
+
+        <div class="item-info">
+          <h3>{{ item.produto.nome }}</h3>
+          <p class="unit-price">
+            {{ item.produto.preco | currency : 'BRL' : 'symbol' : '1.2-2' }} cada
+          </p>
+        </div>
+
+        <div class="quantity-controls">
+          <button (click)="carrinhoService.atualizarQuantidade(item.produto.id, item.quantidade - 1)" title="Diminuir">-</button>
+          <span>{{ item.quantidade }}</span>
+          <button (click)="carrinhoService.atualizarQuantidade(item.produto.id, item.quantidade + 1)" title="Aumentar">+</button>
+        </div>
+
+        <div class="item-total">
+          {{ (+item.produto.preco * item.quantidade) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+        </div>
+
+        <button
+          class="btn-remove"
+          (click)="carrinhoService.removerDoCarrinho(item.produto.id)"
+          title="Remover do carrinho"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- Resumo do Pedido -->
+    <div class="cart-summary">
+      <h2>Resumo do Pedido</h2>
+      <div class="summary-line">
+        <span>Total de Itens:</span>
+        <strong>{{ carrinhoService.totalItens() }}</strong>
+      </div>
+      <div class="summary-line total">
+        <span>Total a Pagar:</span>
+        <strong class="total-price">
+          {{ carrinhoService.precoTotal() | currency : 'BRL' : 'symbol' : '1.2-2' }}
+        </strong>
+      </div>
+
+      <button class="btn btn-primary btn-checkout" (click)="finalizarCompra()" [disabled]="finalizando()">
+        {{ finalizando() ? 'Processando Pedido...' : 'Finalizar Pedido' }}
+      </button>
+    </div>
+  </div>
+</div>

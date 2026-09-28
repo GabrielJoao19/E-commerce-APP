@@ -1,0 +1,61 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Criar Nova Conta</h2>
+      <p>Preencha os dados abaixo para se cadastrar</p>
+    </div>
+
+    <div *ngIf="mensagemErro()" class="alert-error">
+      {{ mensagemErro() }}
+    </div>
+
+    <form [formGroup]="formulario" (ngSubmit)="cadastrar()">
+      <div class="form-group">
+        <label for="nome">Nome Completo</label>
+        <input
+          id="nome"
+          type="text"
+          formControlName="nome"
+          placeholder="Ex: João da Silva"
+        />
+        <span class="field-error" *ngIf="formulario.get('nome')?.touched && formulario.get('nome')?.invalid">
+          O nome deve ter no mínimo 3 caracteres
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="exemplo@email.com.br"
+        />
+        <span class="field-error" *ngIf="formulario.get('email')?.touched && formulario.get('email')?.invalid">
+          Informe um e-mail válido
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input
+          id="senha"
+          type="password"
+          formControlName="senha"
+          placeholder="••••••"
+        />
+        <span class="field-error" *ngIf="formulario.get('senha')?.touched && formulario.get('senha')?.invalid">
+          A senha deve ter no mínimo 6 caracteres
+        </span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-submit" [disabled]="carregando()">
+        {{ carregando() ? 'Criando sua conta...' : 'Cadastrar Conta' }}
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Já possui cadastro? <a routerLink="/entrar">Entrar</a></p>
+    </div>
+  </div>
+</div>

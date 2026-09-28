@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id           String      @id @default(uuid())
+  nome         String
+  email        String      @unique
+  senha        String
+  papel        String      @default("CLIENTE") // "CLIENTE" ou "ADMIN"
+  criadoEm     DateTime    @default(now())
+  atualizadoEm DateTime    @updatedAt
+
+  enderecos    Endereco[]
+  pedidos      Pedido[]
+  avaliacoes   Avaliacao[]
+
+  @@map("usuarios")
+}
+
+model Endereco {
+  id          String   @id @default(uuid())
+  usuarioId   String
+  rua         String
+  numero      String
+  complemento String?
+  bairro      String
+  cidade      String
+  estado      String
+  cep         String
+  padrao      Boolean  @default(false)
+  criadoEm    DateTime @default(now())
+
+  usuario Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  pedidos Pedido[]
+
+  @@map("enderecos")
+}
+
+model Categoria {
+  id           String    @id @default(uuid())
+  nome         String    @unique
+  slug         String    @unique
+  descricao    String?
+  imagemUrl    String?
+  criadoEm     DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+
+  produtos Produto[]
+
+  @@map("categorias")
+}
+
+model Produto {
+  id           String      @id @default(uuid())
+  nome         String
+  slug         String      @unique
+  descricao    String
+  preco        Float
+  estoque      Int         @default(0)
+  imagemUrl    String?
+  imagens      String      @default("[]") // Lista de URLs serializadas em JSON
+  ativo        Boolean     @default(true)
+  categoriaId  String
+  criadoEm     DateTime    @default(now())
+  atualizadoEm DateTime    @updatedAt
+
+  categoria   Categoria    @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
+  itensPedido ItemPedido[]
+  avaliacoes  Avaliacao[]
+
+  @@map("produtos")
+}
+
+model Pedido {
+  id                String   @id @default(uuid())
+  usuarioId         String
+  enderecoEntregaId String?
+  status            String   @default("PENDENTE") // "PENDENTE", "PAGO", "ENVIADO", "ENTREGUE", "CANCELADO"
+  total             Float
+  criadoEm          DateTime @default(now())
+  atualizadoEm      DateTime @updatedAt
+
+  usuario         Usuario      @relation(fields: [usuarioId], references: [id])
+  enderecoEntrega Endereco?    @relation(fields: [enderecoEntregaId], references: [id])
+  itens           ItemPedido[]
+
+  @@map("pedidos")
+}
+
+model ItemPedido {
+  id            String  @id @default(uuid())
+  pedidoId      String
+  produtoId     String
+  quantidade    Int
+  precoUnitario Float
+
+  pedido  Pedido  @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  produto Produto @relation(fields: [produtoId], references: [id])
+
+  @@map("itens_pedido")
+}
+
+model Avaliacao {
+  id         String   @id @default(uuid())
+  usuarioId  String
+  produtoId  String
+  nota       Int
+  comentario String?
+  criadoEm   DateTime @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@map("avaliacoes")
+}

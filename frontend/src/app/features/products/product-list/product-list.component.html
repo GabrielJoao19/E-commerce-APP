@@ -1,0 +1,75 @@
+<div class="container catalog-container">
+  <!-- Barra de Busca e Filtros -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Buscar produtos pelo nome ou descrição..."
+        [ngModel]="termoBusca()"
+        (ngModelChange)="termoBusca.set($event)"
+        (keyup.enter)="buscar()"
+      />
+      <button class="btn btn-primary" (click)="buscar()">Buscar</button>
+    </div>
+
+    <div class="category-chips">
+      <button
+        class="chip"
+        [class.active]="categoriaSelecionada() === ''"
+        (click)="filtrarPorCategoria('')"
+      >
+        Todos os Departamentos
+      </button>
+      <button
+        *ngFor="let cat of categorias()"
+        class="chip"
+        [class.active]="categoriaSelecionada() === cat.id"
+        (click)="filtrarPorCategoria(cat.id)"
+      >
+        {{ cat.nome }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Estado de Carregamento -->
+  <div *ngIf="carregando()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Carregando catálogo de produtos...</p>
+  </div>
+
+  <!-- Estado Vazio -->
+  <div *ngIf="!carregando() && produtos().length === 0" class="empty-state">
+    <span class="empty-icon">📦</span>
+    <h3>Nenhum produto encontrado</h3>
+    <p>Tente refinar sua busca ou escolher outra categoria.</p>
+  </div>
+
+  <!-- Grade de Produtos -->
+  <div *ngIf="!carregando() && produtos().length > 0" class="product-grid">
+    <div *ngFor="let produto of produtos()" class="product-card">
+      <div class="image-wrapper">
+        <img
+          [src]="produto.imagens && produto.imagens.length > 0 ? produto.imagens[0] : 'https://placehold.co/400x300?text=Sem+Foto'"
+          [alt]="produto.nome"
+        />
+        <span class="category-tag">{{ produto.categoria?.nome }}</span>
+      </div>
+
+      <div class="card-body">
+        <h3 class="product-title">
+          <a [routerLink]="['/produtos', produto.id]">{{ produto.nome }}</a>
+        </h3>
+        <p class="product-desc">{{ produto.descricao }}</p>
+        
+        <div class="card-footer">
+          <span class="product-price">
+            {{ produto.preco | currency : 'BRL' : 'symbol' : '1.2-2' }}
+          </span>
+          <button class="btn btn-primary" (click)="adicionarAoCarrinho(produto)">
+            Adicionar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

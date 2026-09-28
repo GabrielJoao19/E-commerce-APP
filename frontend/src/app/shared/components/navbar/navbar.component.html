@@ -1,0 +1,28 @@
+<header class="navbar">
+  <div class="container nav-container">
+    <a routerLink="/" class="logo">
+      <span class="logo-icon">🛍️</span>
+      <span class="logo-text">MegaStore</span>
+    </a>
+
+    <nav class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Início</a>
+      <a routerLink="/carrinho" class="cart-btn" routerLinkActive="active">
+        <span>🛒 Carrinho</span>
+        <span class="badge" *ngIf="carrinhoService.totalItens() > 0">
+          {{ carrinhoService.totalItens() }}
+        </span>
+      </a>
+
+      <ng-container *ngIf="authService.estaAutenticado(); else linksVisitante">
+        <span class="user-greeting">Olá, {{ authService.usuarioAtual()?.nome }}</span>
+        <button class="btn-logout" (click)="sair()">Sair</button>
+      </ng-container>
+
+      <ng-template #linksVisitante>
+        <a routerLink="/entrar" class="btn btn-outline" routerLinkActive="active">Entrar</a>
+        <a routerLink="/cadastrar" class="btn btn-primary" routerLinkActive="active">Cadastrar</a>
+      </ng-template>
+    </nav>
+  </div>
+</header>
